@@ -1,12 +1,13 @@
 var pa = [];
-var fa = [];
+var ga = [];
+var explodeNow = false;
 
 function setup() {
-  createCanvas(1024,768);
-  stroke(255);
-  pa[0] = new Particle(width/2,height/2);
-
-  // background(0);
+  createCanvas(1200, 700);
+  //pa[0] = new Particle(width/2, height/2);
+  noStroke();
+  // noCursor();
+  // stroke(255);
 }
 
 function draw() {
@@ -15,24 +16,24 @@ function draw() {
     pa[i].display();
     pa[i].move();
   }
-
-  for(var j = 0; j < fa.length; j++){
-    fa[j].explode();
+  for(var j = 0; j < ga.length; j++){
+    ga[j].display();
+    ga[j].move();
   }
 }
 
+
 function mouseReleased(){
-  pa[pa.length] = new Particle(mouseX, mouseY);
+  ga[ga.length] = new Grenade(mouseX, mouseY);
 }
 
 function Particle(tempX, tempY){
   this.posX = tempX;
   this.posY = tempY;
   var particleSize = 10;
-  var drawEllipse = true;
 
-  this.vx = random(-10, 10);
-  this.vy = random(-15, 15);
+  this.vx = random(-50, 50);
+  this.vy = random(-55, 55);
   var gravity = 1;
 
   this.move = function() {
@@ -41,55 +42,49 @@ function Particle(tempX, tempY){
     this.vy += gravity;
 
     if(this.posY + 10 > height){
-      // this.vy *= -0.5;
-      // this.vx *= 0.75;
-      // this.posY = height - 9;
-      for(var i = 0; i < 10; i++){
-        var xVel = random(-20,20);
-        var yVel = random(-25,25);
-        fa[i] = new Fragment(100, 100, this.xVel, this.yVel);
-        // println(fa[i]);
-      }
-      drawEllipse = false;
-    }
-
-    // if(this.posX < 0 || this.posX > width){
-    //   this.vx *= -1;
-    // }
-
-    // if(this.posX > width){
-    //   this.vx *= -1;
-    // }
-
-  };
-
-  this.display = function() {
-    if (drawEllipse == true){
-      ellipse(this.posX, this.posY, particleSize);
-    }
-  };
-}
-
- function Fragment(tempX, tempY, tempVx, tempVy){
-  this.posX = tempX;
-  this.posY = tempY;
-  this.vx = tempVx;
-  this.vy = tempVy;
-  var gravity = 1;
-
-  this.explode = function() {
-    ellipse(this.posX, this.posY, 10);
-
-    this.posX += this.vx;
-    this.posY += this.vy;
-
-    if(this.posY + 10 > height){
       this.vy *= -0.5;
       this.vx *= 0.75;
       this.posY = height - 9;
     }
+
     if(this.posX < 0 || this.posX > width){
       this.vx *= -1;
     }
+
+
+  };
+
+  this.display = function() {
+    ellipse(this.posX, this.posY, particleSize);
+  };
+
+}
+function Grenade(tempX, tempY){
+  this.posX = tempX;
+  this.posY = tempY;
+  this.vy = 1;
+  this.doonce = true;
+  var grenadeSize = 20;
+  var drawEllipse = true;
+  gravity = 1;
+
+  this.display = function(){
+    if (drawEllipse == true){
+      ellipse(this.posX, this.posY, 20);
+   }
+ };
+  this.move = function(){
+    this.posY += this.vy;
+    this.vy += gravity;
+
+    if (this.posY >= height-10){
+    drawEllipse = false;
+    if (this.doonce == true){
+      for(i = 0; i<20; i++){
+        pa[pa.length] = new Particle(this.posX, this.posY);
+        }
+      this.doonce = false;
+    }
+  }
   };
 }

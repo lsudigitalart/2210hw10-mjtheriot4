@@ -20,53 +20,51 @@ function draw() {
     ga[j].display();
     ga[j].move();
   }
-  // if (explodeNow == true){
-  //   for(i = 0; i<20; i++){
-  //   pa[pa.length] = new Particle(mouseX, mouseY);
-  //   }
-  //   explodeNow = false;
-  // }
+  ga[ga.length] = new Grenade(random(10, width-10), 10);
 }
 
 
-function mouseReleased(){
-  // for(i = 0; i<20; i++){
-  // pa[pa.length] = new Particle(mouseX, mouseY);
-  // }
-  ga[ga.length] = new Grenade(mouseX, mouseY);
-}
+// function mouseReleased(){
+//   ga[ga.length] = new Grenade(mouseX, mouseY);
+// }
 
 function Particle(tempX, tempY){
   this.posX = tempX;
   this.posY = tempY;
   var particleSize = 10;
+  this.expired = false;
+  this.lifespan = 0;
 
-  this.vx = random(-30, 30);
-  this.vy = random(-35, 35);
+  this.vx = random(-10, 10);
+  this.vy = random(-15, 15);
   var gravity = 1;
 
   this.move = function() {
-    this.posX += this.vx;
-    this.posY += this.vy;
-    this.vy += gravity;
-
-    if(this.posY + 10 > height){
-      this.vy *= -0.5;
-      this.vx *= 0.75;
-      this.posY = height - 9;
+    if(this.expired == false){
+      this.posX += this.vx;
+      this.posY += this.vy;
+      this.vy += gravity;
+      if(this.posY + 10 > height){
+        this.vy *= -0.5;
+        this.vx *= 0.75;
+        this.posY = height - 9;
+      }
+      if(this.posX < 0 || this.posX > width){
+        this.vx *= -1;
+      }
     }
-
-    if(this.posX < 0 || this.posX > width){
-      this.vx *= -1;
-    }
-
-
   };
-
   this.display = function() {
-    ellipse(this.posX, this.posY, particleSize);
-  };
+    if(this.expired == false){
+      ellipse(this.posX, this.posY, particleSize);
 
+      if (this.lifeSpan >= 10){
+        expired = true;
+        println("expired");
+      }
+      this.lifeSpan++;
+    }
+  };
 }
 function Grenade(tempX, tempY){
   this.posX = tempX;
@@ -87,13 +85,13 @@ function Grenade(tempX, tempY){
     this.vy += gravity;
 
     if (this.posY >= height-10){
-    drawEllipse = false;
-    if (this.doonce == true){
-      for(i = 0; i<20; i++){
-        pa[pa.length] = new Particle(this.posX, this.posY);
-        }
-      this.doonce = false;
+      drawEllipse = false;
+      if (this.doonce == true){
+        for(i = 0; i<20; i++){
+          pa[pa.length] = new Particle(this.posX, this.posY);
+          }
+          this.doonce = false;
+      }
     }
-  }
   };
 }
